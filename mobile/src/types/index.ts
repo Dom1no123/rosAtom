@@ -48,12 +48,16 @@ export interface StatisticsResponse {
 
 export interface Alert {
   id: string;
-  stationId: string;
-  stationName: string;
+  targetType: "station" | "zone";
+  targetId: string;
+  targetName: string;
   level: number;
   status: RadiationStatus;
   message: string;
   createdAt: string;
+  startedAt: string;
+  expiresAt?: string;
+  acknowledged: boolean;
 }
 
 export interface AlertsResponse {
@@ -63,6 +67,7 @@ export interface AlertsResponse {
 
 export type ThemeMode = "light" | "dark";
 export type Language = "ru" | "kk" | "en";
+export type SimulationMode = "manual" | "automatic";
 
 export interface Zone {
   id: string;
@@ -82,6 +87,6 @@ export interface ZonesResponse {
 export interface AppSettings {
   themeMode: ThemeMode;
   language: Language;
-  pushEnabled: boolean;
+  notificationsEnabled: boolean;
   refreshIntervalSec: number;
 }

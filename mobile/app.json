@@ -3,10 +3,13 @@
     "name": "Radiation Monitor",
     "slug": "radiation-monitor",
     "version": "1.0.0",
+    "icon": "./assets/icon.png",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "backgroundColor": "#0B1120"
+      "backgroundColor": "#0B1120",
+      "image": "./assets/adaptive-icon.png",
+      "resizeMode": "contain"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -15,30 +18,26 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.hackathon.radiationmonitor",
       "config": {
-        "usesNonExemptEncryption": false,
-        "googleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
       "package": "com.hackathon.radiationmonitor",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0B1120"
-      },
-      "config": {
-        "googleMaps": {
-          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
-        }
-      },
-      "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
-      ]
+      }
     },
     "web": {
       "bundler": "metro"
     },
     "plugins": [
-      "expo-audio"
+      [
+        "expo-notifications",
+        {
+          "sounds": ["./assets/alarm.mp3"]
+        }
+      ]
     ],
     "extra": {
       "eas": {

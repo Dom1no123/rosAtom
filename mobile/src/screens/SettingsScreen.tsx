@@ -5,7 +5,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAppTheme } from "@/theme/ThemeContext";
 import { GlassCard } from "@/components/GlassCard";
 import { AnimatedPressable } from "@/components/AnimatedPressable";
-import { Language, ThemeMode } from "@/types";
+import { Language, SimulationMode, ThemeMode } from "@/types";
+import { useRadiation } from "@/context/RadiationContext";
 
 const languages: { code: Language; label: string }[] = [
   { code: "ru", label: "Русский" },
@@ -16,14 +17,15 @@ const languages: { code: Language; label: string }[] = [
 const intervals = [30, 60, 300, 600];
 
 export default function SettingsScreen() {
+  const { snapshot, setSimulationMode: setEngineMode } = useRadiation();
   const {
     colors,
     themeMode,
     setThemeMode,
     language,
     setLanguage,
-    pushEnabled,
-    setPushEnabled,
+    notificationsEnabled,
+    setNotificationsEnabled,
     refreshIntervalSec,
     setRefreshIntervalSec,
   } = useAppTheme();
@@ -94,14 +96,14 @@ export default function SettingsScreen() {
 
       <View style={styles.section}>
         <GlassCard radius={24}>
-          <Text style={[styles.groupTitle, { color: colors.textSecondary }]}>Язык интерфейса</Text>
+          <Text style={[styles.groupTitle, { color: colors.textSecondary }]}>Язык интерфейса · скоро</Text>
           <View style={[styles.segmentGroup, { marginTop: 6 }]}>
             {languages.map((l) => (
               <SegmentButton
                 key={l.code}
                 active={language === l.code}
                 label={l.label}
-                onPress={() => setLanguage(l.code)}
+                onPress={() => l.code === "ru" && setLanguage(l.code)}
               />
             ))}
           </View>
@@ -110,13 +112,36 @@ export default function SettingsScreen() {
 
       <View style={styles.section}>
         <GlassCard radius={24}>
-          <Row icon="notifications-outline" label="Push-уведомления">
+          <Row icon="notifications-outline" label="Локальные уведомления">
             <Switch
-              value={pushEnabled}
-              onValueChange={setPushEnabled}
+              value={notificationsEnabled}
+              onValueChange={setNotificationsEnabled}
               trackColor={{ true: colors.accent, false: colors.border }}
             />
           </Row>
+          <Text style={[styles.helper, { color: colors.textTertiary }]}>Работают без сервера. Разрешение Android будет запрошено при первом событии.</Text>
+        </GlassCard>
+      </View>
+
+      <View style={styles.section}>
+        <GlassCard radius={24}>
+          <Text style={[styles.groupTitle, { color: colors.textSecondary }]}>Режим аварийных событий</Text>
+          <View style={[styles.segmentGroup, { marginTop: 6 }]}>
+            {([
+              ["manual", "Только вручную"],
+              ["automatic", "Автосимуляция"],
+            ] as [SimulationMode, string][]).map(([mode, label]) => (
+              <SegmentButton
+                key={mode}
+                active={snapshot.simulationMode === mode}
+                label={label}
+                onPress={() => {
+                  setEngineMode(mode);
+                }}
+              />
+            ))}
+          </View>
+          <Text style={[styles.helper, { color: colors.textTertiary }]}>В автоматическом режиме событие возникает через 2–5 минут. Одновременно активна только одна зона.</Text>
         </GlassCard>
       </View>
 
@@ -165,4 +190,5 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   footerNote: { textAlign: "center", fontSize: 12 },
+  helper: { fontSize: 11, lineHeight: 16, marginTop: 10 },
 });

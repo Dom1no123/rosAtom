@@ -10,19 +10,19 @@ interface ThemeContextValue {
   colors: AppColors;
   themeMode: ThemeMode;
   language: Language;
-  pushEnabled: boolean;
+  notificationsEnabled: boolean;
   refreshIntervalSec: number;
   isLoaded: boolean;
   setThemeMode: (mode: ThemeMode) => void;
   setLanguage: (lang: Language) => void;
-  setPushEnabled: (v: boolean) => void;
+  setNotificationsEnabled: (v: boolean) => void;
   setRefreshIntervalSec: (v: number) => void;
 }
 
 const defaultSettings: AppSettings = {
   themeMode: Appearance.getColorScheme() === "dark" ? "dark" : "light",
   language: "ru",
-  pushEnabled: true,
+  notificationsEnabled: false,
   refreshIntervalSec: 60,
 };
 
@@ -61,12 +61,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       colors: settings.themeMode === "dark" ? darkColors : lightColors,
       themeMode: settings.themeMode,
       language: settings.language,
-      pushEnabled: settings.pushEnabled,
+      notificationsEnabled: settings.notificationsEnabled,
       refreshIntervalSec: settings.refreshIntervalSec,
       isLoaded,
       setThemeMode: (mode) => persist({ ...settings, themeMode: mode }),
       setLanguage: (lang) => persist({ ...settings, language: lang }),
-      setPushEnabled: (v) => persist({ ...settings, pushEnabled: v }),
+      setNotificationsEnabled: (v) => persist({ ...settings, notificationsEnabled: v }),
       setRefreshIntervalSec: (v) => persist({ ...settings, refreshIntervalSec: v }),
     }),
     [settings, isLoaded]

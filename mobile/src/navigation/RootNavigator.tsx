@@ -15,6 +15,7 @@ import InstructionsScreen from "@/screens/InstructionsScreen";
 import SettingsScreen from "@/screens/SettingsScreen";
 import StationDetailScreen from "@/screens/StationDetailScreen";
 import { RootStackParamList, TabParamList } from "./types";
+import { flushPendingNotificationNavigation, navigationRef } from "./navigationRef";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -82,7 +83,7 @@ export default function RootNavigator() {
   };
 
   return (
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer ref={navigationRef} theme={navTheme} onReady={flushPendingNotificationNavigation}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Tabs" component={Tabs} />
         <Stack.Screen

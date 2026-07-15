@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ThemeProvider, useAppTheme } from "@/theme/ThemeContext";
-import { ZonesProvider } from "@/context/ZonesContext";
+import { RadiationProvider } from "@/context/RadiationContext";
 import RootNavigator from "@/navigation/RootNavigator";
 
 function AppInner() {
@@ -23,9 +23,9 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <ZonesProvider>
+          <RadiationProvider>
             <AppInner />
-          </ZonesProvider>
+          </RadiationProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

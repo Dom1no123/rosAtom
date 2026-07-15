@@ -1,43 +1,25 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Station } from "@/types";
-import { stationService } from "@/services/stationService";
+import { useCallback, useState } from "react";
+import { useRadiation } from "@/context/RadiationContext";
 
 export function useStations(refreshIntervalSec = 60) {
-  const [stations, setStations] = useState<Station[]>([]);
-  const [updatedAt, setUpdatedAt] = useState<string>("");
-  const [loading, setLoading] = useState(true);
+  void refreshIntervalSec;
+  const { snapshot, loading, refresh: refreshEngine } = useRadiation();
   const [refreshing, setRefreshing] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const load = useCallback(async (isManual = false) => {
-    if (isManual) setRefreshing(true);
+  const refresh = useCallback(async () => {
+    setRefreshing(true);
     try {
-      const data = await stationService.getStations();
-      setStations(data.stations);
-      setUpdatedAt(data.updatedAt);
+      await refreshEngine();
     } finally {
-      setLoading(false);
-      if (isManual) setRefreshing(false);
+      setRefreshing(false);
     }
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  useEffect(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(() => load(), refreshIntervalSec * 1000);
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [refreshIntervalSec, load]);
+  }, [refreshEngine]);
 
   return {
-    stations,
-    updatedAt,
+    stations: snapshot.stations,
+    updatedAt: snapshot.updatedAt,
     loading,
     refreshing,
-    refresh: () => load(true),
+    refresh,
   };
 }
