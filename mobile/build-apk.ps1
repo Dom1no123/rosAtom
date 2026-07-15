@@ -20,10 +20,12 @@ function Assert-LastCommand([string]$Message) {
 
 function Find-AndroidSdk {
     $Candidates = @(
-        $env:ANDROID_HOME,
-        $env:ANDROID_SDK_ROOT,
-        (Join-Path $env:LOCALAPPDATA "Android\Sdk")
-    ) | Where-Object { $_ -and (Test-Path $_) }
+        @(
+            $env:ANDROID_HOME,
+            $env:ANDROID_SDK_ROOT,
+            (Join-Path $env:LOCALAPPDATA "Android\Sdk")
+        ) | Where-Object { $_ -and (Test-Path $_) }
+    )
 
     if ($Candidates.Count -eq 0) {
         throw "Android SDK не найден. Установите Android Studio и Android SDK."
