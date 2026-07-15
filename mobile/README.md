@@ -22,6 +22,22 @@ npm test
 
 ## Сборка APK без Expo-аккаунта
 
+### Windows PowerShell
+
+Откройте PowerShell в папке `mobile` и выполните:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build-apk.ps1
+```
+
+Скрипт сам найдёт Android SDK, установит npm- и Android-зависимости, создаст `local.properties`, соберёт APK и выведет его SHA-256. Для повторной сборки без `npm ci`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build-apk.ps1 -SkipDependencies
+```
+
+### Linux
+
 ```bash
 npm run build:apk
 ```

@@ -20,6 +20,12 @@ npm ci
 npm run build:apk
 ```
 
+На Windows можно запустить автоматический PowerShell-скрипт из папки `mobile`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build-apk.ps1
+```
+
 Готовый устанавливаемый файл:
 
 ```text
