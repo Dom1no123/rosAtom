@@ -25,7 +25,7 @@ export default function NotificationsScreen() {
             <Ionicons name="warning" size={18} color={color} />
           </View>
           <View style={{ flex: 1, marginLeft: 10 }}>
-            <Text style={[styles.itemTitle, { color: colors.text }]}>{item.stationName}</Text>
+            <Text style={[styles.itemTitle, { color: colors.text }]}>{item.targetName}</Text>
             <Text style={[styles.itemStatus, { color }]}>{getStatusLabel(item.status)}</Text>
           </View>
           <Text style={[styles.itemTime, { color: colors.textTertiary }]}>
@@ -42,7 +42,7 @@ export default function NotificationsScreen() {
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.text }]}>Уведомления</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-          {alerts.length ? `${alerts.length} активных предупреждений` : "Нет активных предупреждений"}
+          {alerts.length ? `${alerts.length} событий в журнале` : "Событий пока нет"}
         </Text>
       </View>
 
@@ -57,7 +57,7 @@ export default function NotificationsScreen() {
             <View style={styles.emptyWrap}>
               <Ionicons name="shield-checkmark-outline" size={40} color={colors.normal} />
               <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-                Все станции работают в штатном режиме
+                Журнал аварийных событий пуст
               </Text>
             </View>
           ) : null

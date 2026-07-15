@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -11,25 +11,33 @@ import { RadiationBadge } from "@/components/RadiationBadge";
 import { GlassCard } from "@/components/GlassCard";
 import { AnimatedPressable } from "@/components/AnimatedPressable";
 import { ZoneMapView } from "@/components/ZoneMapView";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { TabParamList } from "@/navigation/types";
 
 export default function MapScreen() {
   const { colors } = useAppTheme();
-  const { zones, tick, source } = useZonesContext();
+  const { zones, tick } = useZonesContext();
+  const route = useRoute<RouteProp<TabParamList, "MapTab">>();
   const [selected, setSelected] = useState<Zone | null>(null);
+
+  useEffect(() => {
+    const requested = zones.find((zone) => zone.id === route.params?.zoneId);
+    if (requested) setSelected(requested);
+  }, [route.params?.zoneId, zones]);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.text }]}>Зоны радиации</Text>
-        <View style={[styles.sourceBadge, { backgroundColor: source === "backend" ? "#30D15833" : "#FF9F0A33" }]}>
+        <View style={[styles.sourceBadge, { backgroundColor: "#30D15833" }]}>
           <View
             style={[
               styles.sourceDot,
-              { backgroundColor: source === "backend" ? colors.normal : colors.dangerous },
+              { backgroundColor: colors.normal },
             ]}
           />
-          <Text style={[styles.sourceText, { color: source === "backend" ? colors.normal : colors.dangerous }]}>
-            {source === "backend" ? "Подключено к серверу" : "Офлайн-режим (демо-данные)"}
+          <Text style={[styles.sourceText, { color: colors.normal }]}>
+            Автономная симуляция
           </Text>
         </View>
       </View>
@@ -62,7 +70,7 @@ export default function MapScreen() {
                 </View>
 
                 <View style={styles.modalBottomRow}>
-                  <Text style={[styles.levelValue, { color: colors.text }]}>{selected.level} мкЗв/ч</Text>
+                  <Text style={[styles.levelValue, { color: colors.text }]}>{selected.level.toFixed(2)} мкЗв/ч</Text>
                   <RadiationBadge status={selected.status} />
                 </View>
                 <Text style={[styles.statusHint, { color: colors.textSecondary }]}>

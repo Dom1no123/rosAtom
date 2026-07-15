@@ -1,9 +1,10 @@
 import React, { useRef } from "react";
-import { Animated, Pressable, PressableProps } from "react-native";
+import { Animated, Pressable, PressableProps, StyleProp, ViewStyle } from "react-native";
 
-interface Props extends PressableProps {
+interface Props extends Omit<PressableProps, "style"> {
   children: React.ReactNode;
   scaleTo?: number;
+  style?: StyleProp<ViewStyle>;
 }
 
 // Uses React Native's built-in Animated API (no react-native-reanimated /
