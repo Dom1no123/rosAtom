@@ -6,18 +6,17 @@
 
 ```text
 rosAtom/
-├── mobile/    # Expo / React Native приложение и локальная Android-сборка
+├── mobile/    # нативное Kotlin / Jetpack Compose приложение
 └── backend/   # архив первоначального Express-прототипа; APK его не использует
 ```
 
 ## Быстрая сборка APK
 
-Требуются Node.js, Java 17 и Android SDK. SDK должен находиться в `$ANDROID_HOME`, `$ANDROID_SDK_ROOT` или `~/Android/Sdk`.
+Требуются только Java 17 и Android SDK 36. Node.js, Expo, NDK и backend не нужны.
 
 ```bash
 cd mobile
-npm ci
-npm run build:apk
+bash scripts/build-apk.sh
 ```
 
 На Windows можно запустить автоматический PowerShell-скрипт из папки `mobile`:
@@ -32,7 +31,7 @@ powershell -ExecutionPolicy Bypass -File .\build-apk.ps1
 mobile/dist/radiation-monitor.apk
 ```
 
-Expo-аккаунт и EAS для этой сборки не нужны. При первом запуске Gradle может долго скачивать Android/React Native зависимости; последующие сборки используют кэш.
+Приложение собирается обычным Gradle и не использует Expo/EAS. Последующие сборки используют локальный Gradle-кэш.
 
 Подробная инструкция и команды проверки находятся в [mobile/README.md](mobile/README.md).
 
@@ -40,18 +39,10 @@ Expo-аккаунт и EAS для этой сборки не нужны. При 
 
 - 20 локальных станций и 5 радиационных зон;
 - согласованные текущие измерения, история и недельная статистика;
-- полностью офлайн SVG-карта без Google Maps;
+- карта OpenStreetMap без Google Maps API; просмотренные тайлы сохраняются в локальном кэше;
 - ручной и автоматический сценарии ЧП;
 - полноэкранная инструкция, сирена и локальные Android-уведомления;
-- сохранение симуляции и настроек в AsyncStorage;
+- сохранение журнала и настроек в Android SharedPreferences;
 - светлая и тёмная темы.
-
-## Проверки
-
-```bash
-cd mobile
-npm run typecheck
-npm test
-```
 
 Backend оставлен только для истории проекта и не требуется ни для сборки, ни для работы APK.

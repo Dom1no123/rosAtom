@@ -1,7 +1,3 @@
-param(
-    [switch]$SkipDependencies
-)
-
 $ErrorActionPreference = "Stop"
 $RootDir = $PSScriptRoot
 $AndroidDir = Join-Path $RootDir "android"
@@ -55,13 +51,7 @@ function Find-SdkManager([string]$SdkDir) {
 
 Set-Location $RootDir
 
-Write-Step "Проверка Node.js, npm и Java"
-if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
-    throw "Node.js не найден. Установите актуальную LTS-версию Node.js."
-}
-if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
-    throw "npm не найден. Переустановите Node.js с npm."
-}
+Write-Step "Проверка Java 17"
 if (-not (Get-Command java -ErrorAction SilentlyContinue)) {
     $AndroidStudioJava = "C:\Program Files\Android\Android Studio\jbr"
     if (Test-Path (Join-Path $AndroidStudioJava "bin\java.exe")) {
@@ -72,8 +62,6 @@ if (-not (Get-Command java -ErrorAction SilentlyContinue)) {
     }
 }
 
-node --version
-npm --version
 java -version
 
 Write-Step "Поиск Android SDK"
@@ -89,21 +77,14 @@ if ($SdkManager) {
     1..100 | ForEach-Object { "y" } | & $SdkManager "--sdk_root=$SdkDir" --licenses | Out-Host
     Assert-LastCommand "Не удалось принять лицензии Android SDK"
 
-    Write-Step "Проверка Android SDK Platform 36, Build Tools и NDK"
+    Write-Step "Проверка Android SDK Platform 36 и Build Tools"
     & $SdkManager "--sdk_root=$SdkDir" `
         "platform-tools" `
         "platforms;android-36" `
-        "build-tools;36.0.0" `
-        "ndk;27.1.12297006"
+        "build-tools;36.0.0"
     Assert-LastCommand "Не удалось установить Android SDK components"
 } else {
     Write-Warning "sdkmanager.bat не найден. Используются уже установленные Android-компоненты."
-}
-
-if (-not $SkipDependencies) {
-    Write-Step "Установка npm-зависимостей"
-    npm ci
-    Assert-LastCommand "npm ci завершился с ошибкой"
 }
 
 if (-not (Test-Path (Join-Path $AndroidDir "gradlew.bat"))) {
@@ -119,16 +100,16 @@ $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
     $Utf8NoBom
 )
 
-Write-Step "Сборка release APK"
+Write-Step "Сборка автономного Kotlin APK"
 Push-Location $AndroidDir
 try {
-    & .\gradlew.bat assembleRelease
+    & .\gradlew.bat assembleDebug
     Assert-LastCommand "Gradle-сборка завершилась с ошибкой"
 } finally {
     Pop-Location
 }
 
-$GradleApk = Join-Path $AndroidDir "app\build\outputs\apk\release\app-release.apk"
+$GradleApk = Join-Path $AndroidDir "app\build\outputs\apk\debug\app-debug.apk"
 if (-not (Test-Path $GradleApk)) {
     throw "Gradle завершился успешно, но APK не найден: $GradleApk"
 }
