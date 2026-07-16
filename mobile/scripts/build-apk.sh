@@ -13,10 +13,10 @@ fi
 printf 'sdk.dir=%s\n' "$SDK_DIR" > "$ROOT_DIR/android/local.properties"
 
 cd "$ROOT_DIR/android"
-./gradlew assembleRelease
+./gradlew assembleDebug
 
 mkdir -p "$ROOT_DIR/dist"
-cp app/build/outputs/apk/release/app-release.apk "$ROOT_DIR/dist/radiation-monitor.apk"
+cp app/build/outputs/apk/debug/app-debug.apk "$ROOT_DIR/dist/radiation-monitor.apk"
 
 echo
 echo "APK готов: $ROOT_DIR/dist/radiation-monitor.apk"

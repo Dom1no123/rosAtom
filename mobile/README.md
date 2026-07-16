@@ -1,77 +1,67 @@
-# Radiation Monitor — автономный Android APK
+# Radiation Monitor — нативный автономный Android APK
 
-Приложение содержит локальный симулятор станций, зон, статистики и аварийных событий. После установки ему не нужны backend, интернет или Google Maps API key.
+Мобильное приложение написано на Kotlin и Jetpack Compose. Expo, React Native, Node.js, EAS, backend и Google Maps API не нужны. Данные и аварийные сценарии работают автономно; интернет используется только для первой загрузки подложки OpenStreetMap.
 
-## Требования для сборки
+## Требования
 
-- Node.js и npm;
-- Java 17;
-- Android SDK в `$ANDROID_HOME`, `$ANDROID_SDK_ROOT` или `~/Android/Sdk`;
-- Android SDK Platform 36, Build Tools 36 и NDK 27.1.12297006.
+- Java 17 (подойдёт JBR из Android Studio);
+- Android SDK Platform 36 и Build Tools 36;
+- Android SDK в `ANDROID_HOME`, `ANDROID_SDK_ROOT` или стандартной папке Android Studio.
 
-Недостающие Android-компоненты Gradle предложит скачать при первой сборке.
+NDK, CMake и Node.js не требуются.
 
-## Установка зависимостей и проверки
+## Windows — одна команда PowerShell
 
-```bash
-cd mobile
-npm ci
-npm run typecheck
-npm test
-```
-
-## Сборка APK без Expo-аккаунта
-
-### Windows PowerShell
-
-Откройте PowerShell в папке `mobile` и выполните:
+Откройте PowerShell в папке `mobile`:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\build-apk.ps1
 ```
 
-Скрипт сам найдёт Android SDK, установит npm- и Android-зависимости, создаст `local.properties`, соберёт APK и выведет его SHA-256. Для повторной сборки без `npm ci`:
+Скрипт найдёт Java и Android SDK, установит недостающие Platform/Build Tools, создаст `local.properties`, соберёт APK и выведет SHA-256.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\build-apk.ps1 -SkipDependencies
-```
+## Linux
 
-### Linux
+Из папки `mobile`:
 
 ```bash
-npm run build:apk
+bash scripts/build-apk.sh
 ```
 
-Скрипт находит Android SDK, создаёт локальный `android/local.properties`, запускает release-сборку и копирует результат сюда:
+Прямая Gradle-команда:
+
+```bash
+cd android
+./gradlew assembleDebug
+```
+
+Готовый APK в обоих случаях:
 
 ```text
 mobile/dist/radiation-monitor.apk
 ```
 
-Первая сборка может занять продолжительное время, потому что Gradle скачивает native-зависимости. Последующие сборки используют локальный кэш.
+Исходный Gradle-артефакт:
 
-Прямая команда Gradle, если она понадобится:
-
-```bash
-cd mobile/android
-ANDROID_HOME="$HOME/Android/Sdk" ./gradlew assembleRelease
+```text
+mobile/android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Исходный Gradle-артефакт находится в `mobile/android/app/build/outputs/apk/release/app-release.apk`.
+## Установка на телефон
 
-## Запуск на подключённом Android-устройстве
+Подключите телефон с включённой USB-отладкой:
 
 ```bash
-npm run android
+adb install -r dist/radiation-monitor.apk
 ```
 
-## Демонстрация
+## Что работает автономно
 
-1. Откройте приложение в airplane mode.
-2. Проверьте главную, офлайн-карту, статистику и карточку станции.
-3. На экране «Инструкции» запустите тестовое ЧП.
-4. Подтвердите полноэкранную инструкцию и откройте красную зону на карте.
-5. Через 60 секунд зона автоматически вернётся к безопасному уровню.
-6. В настройках можно включить автосимуляцию с событиями через 2–5 минут.
+- 20 станций и 5 радиационных зон;
+- локальные измерения, история и недельная статистика;
+- карта OpenStreetMap с локальным кэшем просмотренных тайлов минимум на 7 дней;
+- журнал аварий, ручная и автоматическая симуляция;
+- полноэкранная инструкция, локальная сирена и Android-уведомления;
+- светлая/тёмная тема и настройки в `SharedPreferences`.
 
-Состояние симуляции сохраняется в AsyncStorage и восстанавливается после перезапуска.
+На экране «Инструкции» кнопка тестового ЧП позволяет проверить весь аварийный сценарий без сервера.
